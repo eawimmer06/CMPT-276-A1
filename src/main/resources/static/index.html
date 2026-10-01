@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+    <head>
+        <title>Weather Finder</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <header>
+            <h1>Weather Finder</h1>
+            <h2>View Weather of Canadian Cities</h2>
+        </header>
+        <main>
+            <section>
+                <h1>Select a City</h1>
+                <input type="text" id="city" placeholder="Enter a city">
+                <button id="viewCity">View City</button>
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading weather...</p>
+                </div>
+                <p id="errorMessage"></p>
+                <table id="weatherTable">
+                    <tr>
+                        <th>City</th>
+                        <th>Temperature</th>
+                        <th>Wind</th>
+                        <th>Weather</th>
+                    </tr>
+
+                    <tr id="weatherValues">
+                        <td id="cityName"></td>
+                        <td id="temperature"></td>
+                        <td id="wind"></td>
+                        <td id="description"></td>
+                    </tr>
+                </table>
+            </section>
+            
+            <section>
+                <h2>Top 10 Canadian Cities</h2>
+                <ul id="cityList">
+                    <li><button class="cityButton" data-city="Vancouver">Vancouver</button></li>
+                    <li><button class="cityButton" data-city="Toronto">Toronto</button></li>
+                    <li><button class="cityButton" data-city="Montreal">Montreal</button></li>
+                    <li><button class="cityButton" data-city="Calgary">Calgary</button></li>
+                    <li><button class="cityButton" data-city="Edmonton">Edmonton</button></li>
+                    <li><button class="cityButton" data-city="Ottawa">Ottawa</button></li>
+                    <li><button class="cityButton" data-city="Winnipeg">Winnipeg</button></li>
+                    <li><button class="cityButton" data-city="Quebec City">Quebec City</button></li>
+                    <li><button class="cityButton" data-city="Halifax">Halifax</button></li>
+                    <li><button class="cityButton" data-city="Victoria">Victoria</button></li>
+                </ul>
+                <div id="loading10" class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading weather...</p>
+                </div>
+                <p id="errorMessage10"></p>
+                <table id="weatherTable10">
+                    <tr>
+                        <th>City</th>
+                        <th>Temperature</th>
+                        <th>Wind</th>
+                        <th>Weather</th>
+                    </tr>
+
+                    <tr id="weatherValues10">
+                        <td id="cityName10"></td>
+                        <td id="temperature10"></td>
+                        <td id="wind10"></td>
+                        <td id="description10"></td>
+                    </tr>
+                </table>
+            </section>
+        </main>
+        <script src="app.js"></script>
+    </body>
+</html>
