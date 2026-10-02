@@ -10,6 +10,17 @@ const wind = document.getElementById("wind");
 const description = document.getElementById("description");
 
 
+const cityButtons = document.querySelectorAll(".cityButton");
+
+const loading10 = document.getElementById("loading10");
+const errorMessage10 = document.getElementById("errorMessage10");
+
+const cityName10 = document.getElementById("cityName10");
+const temperature10 = document.getElementById("temperature10");
+const wind10 = document.getElementById("wind10");
+const description10 = document.getElementById("description10");
+
+
 viewCityButton.addEventListener("click", function() {
 
     const city = cityInput.value.trim();
@@ -19,19 +30,43 @@ viewCityButton.addEventListener("click", function() {
         return;
     }
 
-    getWeather(city);
+    getWeather(city, false);
 
 });
 
 
-async function getWeather(city) {
+cityButtons.forEach(function(button) {
 
-    loading.style.display = "block";
-    errorMessage.textContent = "";
+    button.addEventListener("click", function() {
+
+        const city = button.dataset.city;
+
+        getWeather(city, true);
+
+    });
+
+});
+
+
+async function getWeather(city, isTop10) {
+
+    let currentLoading;
+    let currentErrorMessage;
+
+    if (isTop10) {
+        currentLoading = loading10;
+        currentErrorMessage = errorMessage10;
+    } else {
+        currentLoading = loading;
+        currentErrorMessage = errorMessage;
+    }
+
+    currentLoading.style.display = "block";
+    currentErrorMessage.textContent = "";
 
     try {
 
-        // Find the city's coordinates
+        // Find the city's latitude and longitude
         const locationResponse = await fetch(
             `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`
         );
@@ -49,6 +84,7 @@ async function getWeather(city) {
         const latitude = locationData.results[0].latitude;
         const longitude = locationData.results[0].longitude;
 
+
         // Get the current weather
         const weatherResponse = await fetch(
             `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m,weather_code&temperature_unit=celsius&wind_speed_unit=kmh`
@@ -59,28 +95,40 @@ async function getWeather(city) {
         }
 
         const weatherData = await weatherResponse.json();
-
         const currentWeather = weatherData.current;
 
-        // Display the weather
-        cityName.textContent = city;
-        temperature.textContent =
-            currentWeather.temperature_2m + " °C";
 
-        wind.textContent =
-            currentWeather.wind_speed_10m + " km/h";
+        // Display the weather in the correct table
+        if (isTop10) {
 
-        description.textContent =
-            getWeatherDescription(currentWeather.weather_code);
+            cityName10.textContent = city;
+            temperature10.textContent =
+                currentWeather.temperature_2m + " °C";
+            wind10.textContent =
+                currentWeather.wind_speed_10m + " km/h";
+            description10.textContent =
+                getWeatherDescription(currentWeather.weather_code);
+
+        } else {
+
+            cityName.textContent = city;
+            temperature.textContent =
+                currentWeather.temperature_2m + " °C";
+            wind.textContent =
+                currentWeather.wind_speed_10m + " km/h";
+            description.textContent =
+                getWeatherDescription(currentWeather.weather_code);
+
+        }
 
     } catch (error) {
 
-        errorMessage.textContent =
+        currentErrorMessage.textContent =
             "Could not load weather for " + city + ".";
 
     } finally {
 
-        loading.style.display = "none";
+        currentLoading.style.display = "none";
 
     }
 }
