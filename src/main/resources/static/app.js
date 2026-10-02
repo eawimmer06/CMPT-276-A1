@@ -1,12 +1,38 @@
+const cityInput = document.getElementById("city");
+const viewCityButton = document.getElementById("viewCity");
+
+const loading = document.getElementById("loading");
+const errorMessage = document.getElementById("errorMessage");
+
+const cityName = document.getElementById("cityName");
+const temperature = document.getElementById("temperature");
+const wind = document.getElementById("wind");
+const description = document.getElementById("description");
+
+
 const cityButtons = document.querySelectorAll(".cityButton");
 
-const loading = document.getElementById("loading10");
-const errorMessage = document.getElementById("errorMessage10");
+const loading10 = document.getElementById("loading10");
+const errorMessage10 = document.getElementById("errorMessage10");
 
-const cityName = document.getElementById("cityName10");
-const temperature = document.getElementById("temperature10");
-const wind = document.getElementById("wind10");
-const description = document.getElementById("description10");
+const cityName10 = document.getElementById("cityName10");
+const temperature10 = document.getElementById("temperature10");
+const wind10 = document.getElementById("wind10");
+const description10 = document.getElementById("description10");
+
+
+viewCityButton.addEventListener("click", function() {
+
+    const city = cityInput.value.trim();
+
+    if (city === "") {
+        errorMessage.textContent = "Please enter a city.";
+        return;
+    }
+
+    getWeather(city, false);
+
+});
 
 
 cityButtons.forEach(function(button) {
@@ -15,17 +41,28 @@ cityButtons.forEach(function(button) {
 
         const city = button.dataset.city;
 
-        getWeather(city);
+        getWeather(city, true);
 
     });
 
 });
 
 
-async function getWeather(city) {
+async function getWeather(city, isTop10) {
 
-    loading.style.display = "block";
-    errorMessage.textContent = "";
+    let currentLoading;
+    let currentErrorMessage;
+
+    if (isTop10) {
+        currentLoading = loading10;
+        currentErrorMessage = errorMessage10;
+    } else {
+        currentLoading = loading;
+        currentErrorMessage = errorMessage;
+    }
+
+    currentLoading.style.display = "block";
+    currentErrorMessage.textContent = "";
 
     try {
 
@@ -47,6 +84,7 @@ async function getWeather(city) {
         const latitude = locationData.results[0].latitude;
         const longitude = locationData.results[0].longitude;
 
+
         // Get the current weather
         const weatherResponse = await fetch(
             `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m,weather_code&temperature_unit=celsius&wind_speed_unit=kmh`
@@ -57,25 +95,40 @@ async function getWeather(city) {
         }
 
         const weatherData = await weatherResponse.json();
-
-        // Get the weather information
         const currentWeather = weatherData.current;
 
-        // Put the information into the table
-        cityName.textContent = city;
-        temperature.textContent = currentWeather.temperature_2m + " °C";
-        wind.textContent = currentWeather.wind_speed_10m + " km/h";
-        description.textContent = getWeatherDescription(
-            currentWeather.weather_code
-        );
+
+        // Display the weather in the correct table
+        if (isTop10) {
+
+            cityName10.textContent = city;
+            temperature10.textContent =
+                currentWeather.temperature_2m + " °C";
+            wind10.textContent =
+                currentWeather.wind_speed_10m + " km/h";
+            description10.textContent =
+                getWeatherDescription(currentWeather.weather_code);
+
+        } else {
+
+            cityName.textContent = city;
+            temperature.textContent =
+                currentWeather.temperature_2m + " °C";
+            wind.textContent =
+                currentWeather.wind_speed_10m + " km/h";
+            description.textContent =
+                getWeatherDescription(currentWeather.weather_code);
+
+        }
 
     } catch (error) {
 
-        errorMessage.textContent = "Could not load weather for " + city + ".";
+        currentErrorMessage.textContent =
+            "Could not load weather for " + city + ".";
 
     } finally {
 
-        loading.style.display = "none";
+        currentLoading.style.display = "none";
 
     }
 }
@@ -87,31 +140,39 @@ function getWeatherDescription(weatherCode) {
         return "Clear sky";
     }
 
-    if (weatherCode === 1 || weatherCode === 2 || weatherCode === 3) {
+    if (weatherCode === 1 ||
+        weatherCode === 2 ||
+        weatherCode === 3) {
         return "Cloudy";
     }
 
-    if (weatherCode === 45 || weatherCode === 48) {
+    if (weatherCode === 45 ||
+        weatherCode === 48) {
         return "Fog";
     }
 
-    if (weatherCode >= 51 && weatherCode <= 57) {
+    if (weatherCode >= 51 &&
+        weatherCode <= 57) {
         return "Drizzle";
     }
 
-    if (weatherCode >= 61 && weatherCode <= 67) {
+    if (weatherCode >= 61 &&
+        weatherCode <= 67) {
         return "Rain";
     }
 
-    if (weatherCode >= 71 && weatherCode <= 77) {
+    if (weatherCode >= 71 &&
+        weatherCode <= 77) {
         return "Snow";
     }
 
-    if (weatherCode >= 80 && weatherCode <= 82) {
+    if (weatherCode >= 80 &&
+        weatherCode <= 82) {
         return "Rain showers";
     }
 
-    if (weatherCode >= 85 && weatherCode <= 86) {
+    if (weatherCode >= 85 &&
+        weatherCode <= 86) {
         return "Snow showers";
     }
 
